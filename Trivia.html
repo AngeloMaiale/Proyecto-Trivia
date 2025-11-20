@@ -3,85 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Demo de estilos - Trivia</title>
+  <title>Trivia Asíncrona</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="app">
     <h1>Trivia Asíncrona</h1>
-
-    <section class="card">
-      <h2 class="small">Inputs y controles</h2>
-      <div class="row" style="align-items:flex-end; gap:12px;">
-        <div>
-          <div class="small muted">Nombre</div>
-          <input type="text" placeholder="Ejemplo: Angelo" value="Angelo">
-        </div>
-        <div>
-          <div class="small muted">Cantidad</div>
-          <input type="number" min="5" max="20" value="10">
-        </div>
-        <div>
-          <div class="small muted">Dificultad</div>
-          <select>
-            <option>Fácil</option><option selected>Medio</option><option>Difícil</option>
-          </select>
-        </div>
-        <div class="controls">
-          <button>Primario</button>
-          <button class="ghost">Secundario</button>
-        </div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2 class="small">Loader</h2>
-      <div class="row">
-        <div class="loader" aria-hidden="true"></div>
-        <div class="muted small">Cargando preguntas...</div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2 class="small">Pregunta y respuestas</h2>
-      <div class="question">¿Cuál es la capital de Francia?</div>
-      <div class="answers" style="margin-bottom:8px;">
-        <button class="answer-btn">Londres</button>
-        <button class="answer-btn wrong">Madrid</button>
-        <button class="answer-btn correct">París</button>
-        <button class="answer-btn disabled">Berlín</button>
-      </div>
-
-      <div style="margin-top:8px;">
-        <div class="timer" id="demoTimer"><div class="timer-bar" style="width:40%"></div></div>
-        <div class="timer-text small muted">Tiempo restante: 8s</div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2 class="small">Panel lateral / estadísticas</h2>
-      <div class="stats">
-        <div class="stat"><div class="small muted">Jugador</div><div class="small">Angelo</div></div>
-        <div class="stat"><div class="small muted">Puntuación</div><div class="big">120</div></div>
-        <div class="stat"><div class="small muted">Correctas</div><div>12</div></div>
-        <div class="stat"><div class="small muted">Incorrectas</div><div>3</div></div>
-        <div class="stat"><div class="small muted">Tiempo medio</div><div class="small">9.2s</div></div>
-      </div>
-    </section>
-
-    <section class="card final">
-      <h2>Pantalla final</h2>
-      <div class="muted">Jugador: <strong>Angelo</strong></div>
-      <div style="font-size:32px;font-weight:800;color:var(--accent)">120 pts</div>
-      <div class="muted">Respuestas correctas: 12 de 15</div>
-      <div class="muted">Porcentaje de aciertos: 80%</div>
-      <div class="muted">Tiempo promedio por pregunta: 9.2 s</div>
-      <div style="display:flex;gap:8px;margin-top:12px">
-        <button>Jugar de nuevo</button>
-        <button class="ghost">Cambiar configuración</button>
-        <button class="ghost">Finalizar</button>
-      </div>
-    </section>
+    <div id="root" class="grid"></div>
   </div>
+  <script src="script.js"></script>
 </body>
 </html>

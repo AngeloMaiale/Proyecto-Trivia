@@ -53,6 +53,12 @@ button{
 
 button.ghost{background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted)}
 
+select {
+  background-color: #0b1220;
+  color: #e6eef6;          
+}
+
+
 .center{display:flex; align-items:center; justify-content:center}
 
 .card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.015)); padding:16px; border-radius:10px; border:1px solid rgba(255,255,255,0.02)}
