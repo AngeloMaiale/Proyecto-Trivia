@@ -291,6 +291,20 @@ function updateTimerUI() {
   timerText.textContent = `Tiempo restante: ${remaining}s`;
 }
 
+function markTimeExpired() {
+  state.timesPerQuestion.push(20);
+  state.incorrect += 1;
+  updateSidebar();
+  const all = document.querySelectorAll('.answer-btn');
+  all.forEach(b => {
+    b.classList.add('disabled');
+    if (b.textContent === state.questions[state.currentIndex].correct) b.classList.add('correct');
+  });
+  setTimeout(() => {
+    nextQuestion();
+  }, 1200);
+}
+
 function shuffleArray(a) {
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -306,6 +320,124 @@ function decodeHtml(html) {
 function escapeHtml(s) {
   if (!s) return '';
   return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[m]));
+}
+
+function onSelectAnswer(buttonEl, selected) {
+  if (buttonEl.classList.contains('disabled')) return;
+  pauseTimer();
+  const all = document.querySelectorAll('.answer-btn');
+  all.forEach(b => b.classList.add('disabled'));
+  const q = state.questions[state.currentIndex];
+  const isCorrect = selected === q.correct;
+  const elapsed = (Date.now() - state.questionStartTimestamp) / 1000;
+  state.timesPerQuestion.push(Number(elapsed.toFixed(2)));
+
+  if (isCorrect) {
+    buttonEl.classList.add('correct');
+    state.score += 10;
+    state.correct += 1;
+  } else {
+    buttonEl.classList.add('wrong');
+    state.incorrect += 1;
+    all.forEach(b => {
+      if (b.textContent === q.correct) b.classList.add('correct');
+    });
+  }
+
+  updateSidebar();
+  setTimeout(() => {
+    nextQuestion();
+  }, 1300);
+}
+
+function nextQuestion() {
+  stopTimer();
+  state.currentIndex++;
+  if (state.currentIndex >= state.questions.length) {
+    showFinalScreen();
+  } else {
+    updateQuestionUI();
+    startQuestionTimer();
+  }
+}
+
+function updateSidebar() {
+  const scoreEl = document.getElementById('score');
+  const corrEl = document.getElementById('correct');
+  const incorrEl = document.getElementById('incorrect');
+  const avgTimeEl = document.getElementById('avgTime');
+  if (scoreEl) scoreEl.textContent = String(state.score);
+  if (corrEl) corrEl.textContent = String(state.correct);
+  if (incorrEl) incorrEl.textContent = String(state.incorrect);
+  if (avgTimeEl) avgTimeEl.textContent = state.timesPerQuestion.length ? ( (state.timesPerQuestion.reduce((a,b)=>a+b,0) / state.timesPerQuestion.length).toFixed(1) + 's' ) : '-';
+}
+
+function showFinalScreen() {
+  stopTimer();
+  root.innerHTML = '';
+  const total = state.questions.length;
+  const correct = state.correct;
+  const avgTime = state.timesPerQuestion.length ? (state.timesPerQuestion.reduce((a,b)=>a+b,0) / state.timesPerQuestion.length) : 0;
+  const percent = total ? Math.round((correct / total) * 100) : 0;
+
+  const c = document.createElement('div');
+  c.className = 'card final';
+  c.innerHTML = `
+    <div style="font-size:18px;font-weight:700">Resultados finales</div>
+    <div class="small muted">Jugador: <strong id="resName"></strong></div>
+    <div style="font-size:36px;font-weight:800;color:var(--accent)" id="resScore"></div>
+    <div class="small muted" id="resCorrect"></div>
+    <div class="small muted" id="resPercent"></div>
+    <div class="small muted" id="resAvgTime"></div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button id="playSame">Nuevo juego (misma configuración)</button>
+      <button id="playNew" class="ghost">Cambiar configuración</button>
+      <button id="end" class="ghost">Finalizar</button>
+    </div>
+  `;
+  root.appendChild(c);
+
+  c.querySelector('#resName').textContent = state.config.name;
+  c.querySelector('#resScore').textContent = state.score + ' pts';
+  c.querySelector('#resCorrect').textContent = `Respuestas correctas: ${correct} de ${total}`;
+  c.querySelector('#resPercent').textContent = `Porcentaje de aciertos: ${percent}%`;
+  c.querySelector('#resAvgTime').textContent = `Tiempo promedio por pregunta: ${avgTime.toFixed(2)} s`;
+
+  c.querySelector('#playSame').addEventListener('click', async () => {
+    state.currentIndex = 0;
+    state.score = 0;
+    state.correct = 0;
+    state.incorrect = 0;
+    state.timesPerQuestion = [];
+    showLoading('Obteniendo nuevas preguntas con la misma configuración...');
+    try {
+      state.questions = await fetchQuestions(state.config);
+      renderGame();
+      startQuestionTimer();
+    } catch (err) {
+      showFinalScreen();
+    }
+  });
+
+  c.querySelector('#playNew').addEventListener('click', () => {
+    state.config = null;
+    renderSetup();
+  });
+
+  c.querySelector('#end').addEventListener('click', () => {
+    root.innerHTML = '';
+    const endCard = document.createElement('div');
+    endCard.className = 'card center';
+    endCard.style.minHeight = '160px';
+    endCard.innerHTML = `
+      <div style="font-weight:700">Gracias por jugar</div>
+      <div style="margin-left:12px">
+        <button id="backToSetup">Volver a configuración</button>
+      </div>
+    `;
+    root.appendChild(endCard);
+    endCard.querySelector('#backToSetup').addEventListener('click', () => renderSetup());
+  });
 }
 
 renderSetup();

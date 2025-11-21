@@ -47,7 +47,7 @@ input[type="text"], select, input[type="number"]{
 .controls{display:flex; gap:12px; flex-wrap:wrap}
 
 button{
-  background:linear-gradient(90deg,var(--accent), #0ea5b7); color:#022; border:none; padding:10px 14px;
+  background:linear-gradient(90deg,var(--accent), #0ea5b7); color:rgb(217, 255, 0); border:none; padding:10px 14px;
   border-radius:10px; cursor:pointer; font-weight:600;
 }
 
